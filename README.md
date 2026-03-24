@@ -1,6 +1,6 @@
 # FCA In-Close (PostgreSQL)
 
-Проект реализует перечисление формальных понятий (FCA) в PostgreSQL по мотивам In-Close:
+Проект реализует перечисление формальных понятий (FCA) в PostgreSQL по мотивам In-Close5:
 
 - хранение формального контекста: `fca.objects`, `fca.attributes`, `fca.context`;
 - вертикальная материализация по атрибутам: `fca.attr_extent`;
@@ -10,15 +10,23 @@
 
 ## Файлы проекта
 
-- `scripts/inclose5_postgresql.sql` — основная схема/функции/вьюхи;
-- `scripts/run_pairs_scenario.sql` — готовый SQL-сценарий запуска на `data/pairs.csv`;
-- `scripts/autotest_pairs.sql` — автотесты (падают с `ERROR`, если нарушена корректность);
-- `scripts/export_hasse_dot.sql` — экспорт рёбер/концептов в Graphviz DOT для визуализации;
-- `scripts/wide_context_to_pairs.py` — конвертер wide formal context CSV в `obj_key,attr_key`;
-- `scripts/run_formal_context_csv.sh` — автоматический pipeline для wide CSV;
-- `data/pairs.csv` — минимальный пример контекста (`obj_key,attr_key`);
-- `data/iris_binarized.csv` — пример wide формального контекста (объекты в строках, атрибуты в колонках);
-- `hasse/` — папка для артефактов визуализации (`.dot`, `.png`, `.svg`).
+**Скрипты (по важности):**
+- `scripts/inclose5_postgresql.sql` — ядро: схема, функции, вьюхи;
+- `scripts/run_pairs_scenario.sql` — SQL-сценарий запуска на long-пары;
+- `scripts/run_formal_context_csv.sh` — pipeline для wide CSV (конвертация + запуск);
+- `scripts/wide_context_to_pairs.py` — конвертер wide → `obj_key,attr_key`;
+- `scripts/autotest_pairs.sql` — автотесты для `data/pairs.csv` (падают с `ERROR` при нарушении корректности);
+- `scripts/export_hasse_dot.sql` — экспорт в Graphviz DOT для визуализации.
+
+**Данные (исходник → сгенерированные пары):**
+- `data/pairs.csv` — мини-пример long-формата (`obj_key,attr_key`), используется сценарием и автотестами;
+- `data/iris_binarized.csv` → `data/iris_binarized_pairs.csv` — wide-пример (iris, бинаризованные признаки);
+- `data/animal_movement.csv` → `data/animal_movement_pairs.csv` — wide-пример (животные × способности: fly, hunt, run, swim).
+
+Файлы `*_pairs.csv` создаются скриптом `run_formal_context_csv.sh`.
+
+**Визуализация:**
+- `hasse/` — артефакты (`.dot`, `.png`, `.svg`).
 
 ## Требования
 
@@ -71,6 +79,7 @@ psql -d fca_db -f "./scripts/autotest_pairs.sql"
 ```bash
 cd FCA
 ./scripts/run_formal_context_csv.sh ./data/iris_binarized.csv
+./scripts/run_formal_context_csv.sh ./data/animal_movement.csv
 ```
 
 Что делает скрипт:
